@@ -13,7 +13,6 @@ public record DadosListagemUsuario(
         String biografia,
         List<String> perfis
 ) {
-
     public DadosListagemUsuario(Usuario usuario) {
         this(usuario.getId(), usuario.getUsername(), usuario.getNomeCompleto(), usuario.getNomeUsuario(),  usuario.getMiniBiografia(), usuario.getBiografia(), usuario.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
     }

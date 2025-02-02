@@ -19,7 +19,6 @@ import java.io.IOException;
 public class FiltroTokenAcesso extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-
     private final UsuarioRepository usuarioRepository;
 
     public FiltroTokenAcesso(TokenService tokenService, UsuarioRepository usuarioRepository) {
@@ -38,7 +37,6 @@ public class FiltroTokenAcesso extends OncePerRequestFilter {
             Usuario usuario = usuarioRepository.findByEmailIgnoreCaseAndVerificadoTrue(email).orElseThrow();
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
@@ -47,11 +45,9 @@ public class FiltroTokenAcesso extends OncePerRequestFilter {
 
     private String recuperarTokenRequisicao(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
-
-        if (authorizationHeader != null) {
+        if(authorizationHeader != null){
             return authorizationHeader.replace("Bearer ", "");
         }
-
         return null;
     }
 }

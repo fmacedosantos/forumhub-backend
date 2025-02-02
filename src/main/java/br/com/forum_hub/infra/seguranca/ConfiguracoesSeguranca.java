@@ -58,19 +58,19 @@ public class ConfiguracoesSeguranca {
     }
 
     @Bean
-    public PasswordEncoder encriptador() {
+    public PasswordEncoder encriptador(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration  authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public RoleHierarchy hierarquiaPerfis() {
-        String hierarquia = "ROLE_ADMIN > ROLE_MODERADOR\n" +
-                "ROLE_MODERADOR > ROLE_INSTRUTOR\n" +
+    public RoleHierarchy hierarquiaPerfis(){
+        String hierarquia = "ROLE_ADMIN > ROLE_MODERADOR\n"+
+                "ROLE_MODERADOR > ROLE_INSTRUTOR\n"+
                 "ROLE_MODERADOR > ROLE_ESTUDANTE";
 
         return RoleHierarchyImpl.fromHierarchy(hierarquia);

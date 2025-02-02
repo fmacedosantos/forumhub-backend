@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacaoController {
 
     private final AuthenticationManager authenticationManager;
-
     private final TokenService tokenService;
-
     private final UsuarioRepository usuarioRepository;
 
     public AutenticacaoController(AuthenticationManager authenticationManager, TokenService tokenService, UsuarioRepository usuarioRepository) {
@@ -37,11 +35,11 @@ public class AutenticacaoController {
         String tokenAcesso = tokenService.gerarToken((Usuario) authentication.getPrincipal());
         String refreshToken = tokenService.gerarRefreshToken((Usuario) authentication.getPrincipal());
 
-        return  ResponseEntity.ok(new DadosToken(tokenAcesso, refreshToken));
+        return ResponseEntity.ok(new DadosToken(tokenAcesso, refreshToken));
     }
 
     @PostMapping("/atualizar-token")
-    public ResponseEntity<DadosToken> atualizarToken(@Valid @RequestBody DadosRefreshToken dados) {
+    public ResponseEntity<DadosToken> atualizarToken(@Valid @RequestBody DadosRefreshToken dados){
         var refreshToken = dados.refreshToken();
         Long idUsuario = Long.valueOf(tokenService.verificarToken(refreshToken));
         var usuario = usuarioRepository.findById(idUsuario).orElseThrow();
@@ -49,6 +47,6 @@ public class AutenticacaoController {
         String tokenAcesso = tokenService.gerarToken(usuario);
         String tokenAtualizacao = tokenService.gerarRefreshToken(usuario);
 
-        return  ResponseEntity.ok(new DadosToken(tokenAcesso, tokenAtualizacao));
+        return ResponseEntity.ok(new DadosToken(tokenAcesso, tokenAtualizacao));
     }
 }
