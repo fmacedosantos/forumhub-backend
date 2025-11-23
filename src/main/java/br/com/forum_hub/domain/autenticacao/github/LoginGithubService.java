@@ -26,7 +26,7 @@ public class LoginGithubService {
         return String.format("https://github.com/login/oauth/authorize" +
                 "?client_id=%s" +
                 "&redirect_uri=%s" +
-                "&scope=read:user,user:email,public_repo", githubClientId, redirectUri);
+                "&scope=user:email,public_repo", githubClientId, redirectUri);
 
     }
 
