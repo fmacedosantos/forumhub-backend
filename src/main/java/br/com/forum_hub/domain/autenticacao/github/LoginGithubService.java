@@ -26,7 +26,7 @@ public class LoginGithubService {
         return String.format("https://github.com/login/oauth/authorize" +
                 "?client_id=%s" +
                 "&redirect_uri=%s" +
-                "&scope=read:user,user:email", githubClientId, redirectUri);
+                "&scope=read:user,user:email,public_repo", githubClientId, redirectUri);
 
     }
 
@@ -58,6 +58,14 @@ public class LoginGithubService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(DadosEmail[].class);
+
+        var repositorios = restClient.get()
+                .uri("https://api.github.com/user/repos")
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .body(String.class);
+        System.out.println(repositorios);
 
         for(DadosEmail dadosEmail : resposta){
             if(dadosEmail.primary() && dadosEmail.verified()) {
