@@ -11,9 +11,9 @@ import java.util.Map;
 @Service
 public class LoginGithubService {
 
-    @Value("${FORUM_HUB_CLIENT_ID}")
+    @Value("github.oauth.clienteId")
     private String githubClientId;
-    @Value("${FORUM_HUB_CLIENT_SECRET}")
+    @Value("github.oauth.clientSecret")
     private String githubClientSecret;
     private final String redirectUri = "http://localhost:8080/login/github/autorizado";
     private final RestClient restClient;
