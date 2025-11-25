@@ -12,9 +12,9 @@ import java.util.Map;
 public class LoginGithubService {
 
     @Value("github.oauth.clienteId")
-    private String githubClientId;
+    private String clientId;
     @Value("github.oauth.clientSecret")
-    private String githubClientSecret;
+    private String clientSecret;
     private final String redirectUri = "http://localhost:8080/login/github/autorizado";
     private final RestClient restClient;
 
@@ -26,7 +26,7 @@ public class LoginGithubService {
         return String.format("https://github.com/login/oauth/authorize" +
                 "?client_id=%s" +
                 "&redirect_uri=%s" +
-                "&scope=user:email,public_repo", githubClientId, redirectUri);
+                "&scope=user:email,public_repo", clientId, redirectUri);
 
     }
 
@@ -37,8 +37,8 @@ public class LoginGithubService {
                 .accept(MediaType.APPLICATION_JSON)
                 .body(Map.of(
                         "code", code,
-                        "client_id", githubClientId,
-                        "client_secret", githubClientSecret,
+                        "client_id", clientId,
+                        "client_secret", clientSecret,
                         "redirect_uri", redirectUri
                 )).retrieve()
                 .body(Map.class);
