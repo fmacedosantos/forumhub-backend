@@ -1,6 +1,8 @@
 package br.com.forum_hub.domain.autenticacao.google;
 
 import br.com.forum_hub.domain.autenticacao.github.DadosEmail;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,36 +48,14 @@ public class LoginGoogleService {
                 )).retrieve()
                 .body(Map.class);
 
-        return resposta.get("access_token").toString();
+        return resposta.get("id_token").toString();
     }
 
     public String obterEmail(String code){
         var token = obterToken(code);
 
-        var headers = new HttpHeaders();
-        headers.setBearerAuth(token);
+        var decodedJWT = JWT.decode(token);
 
-        var resposta = restClient.get()
-                .uri("https://api.github.com/user/emails")
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(DadosEmail[].class);
-
-        var repositorios = restClient.get()
-                .uri("https://api.github.com/user/repos")
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .body(String.class);
-        System.out.println(repositorios);
-
-        for(DadosEmail dadosEmail : resposta){
-            if(dadosEmail.primary() && dadosEmail.verified()) {
-                return dadosEmail.email();
-            }
-        }
-
-        return null;
+        return decodedJWT.getClaim("email").asString();
     }
 }
