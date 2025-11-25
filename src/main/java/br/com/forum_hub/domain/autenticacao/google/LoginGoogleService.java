@@ -1,10 +1,7 @@
 package br.com.forum_hub.domain.autenticacao.google;
 
-import br.com.forum_hub.domain.autenticacao.github.DadosEmail;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -30,12 +27,13 @@ public class LoginGoogleService {
                 "?client_id=%s" +
                 "&redirect_uri=%s" +
                 "&scope=https://www.googleapis.com/auth/userinfo.email" +
-                "&response_type=code", clientId, redirectUri);
+                "&response_type=code" +
+                "&access_type=offline", clientId, redirectUri);
 
     }
 
-    private String obterToken(String code) {
-        var resposta = restClient.post()
+    private Map obterTokens(String code) {
+        return restClient.post()
                 .uri("https://oauth2.googleapis.com/token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -47,15 +45,39 @@ public class LoginGoogleService {
                         "grant_type", "authorization_code"
                 )).retrieve()
                 .body(Map.class);
-
-        return resposta.get("id_token").toString();
     }
 
     public String obterEmail(String code){
-        var token = obterToken(code);
+        var tokens = obterTokens(code);
 
-        var decodedJWT = JWT.decode(token);
+        var idToken = tokens.get("id_token").toString();
+        var refreshToken = tokens.get("refresh_token");
+
+        if (refreshToken != null){
+            //TODO: guardar no bd
+            System.out.println("Refresh token: " + refreshToken);
+        }
+
+        var decodedJWT = JWT.decode(idToken);
 
         return decodedJWT.getClaim("email").asString();
+    }
+
+
+    public String renovarAccessToken(String refreshToken) {
+        var resposta = restClient.post()
+                .uri("https://oauth2.googleapis.com/token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Map.of(
+                        "client_id", clientId,
+                        "client_secret", clientSecret,
+                        "refresh_token", refreshToken,
+                        "grant_type", "refresh_token"
+                )).retrieve()
+                .body(Map.class);
+
+        return resposta.get("access_token").toString();
+
     }
 }
