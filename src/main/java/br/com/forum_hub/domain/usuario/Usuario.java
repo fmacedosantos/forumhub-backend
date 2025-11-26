@@ -149,4 +149,12 @@ public class Usuario implements UserDetails {
     public void gerarSecret(String secret) {
         this.secret = secret;
     }
+
+    public boolean isA2fAtiva() {
+        return this.a2fAtiva;
+    }
+
+    public void ativarA2f() {
+        this.a2fAtiva = true;
+    }
 }
